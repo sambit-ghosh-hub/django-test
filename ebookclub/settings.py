@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     "members",
     'rest_framework',
     'rest_framework.authtoken',
-    'apis'
+    'apis',
+    'celery',
 ]
 
 MIDDLEWARE = [
@@ -130,3 +131,11 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# CELERY SETTINGS
+CELERY_BROKER_URL = 'pyamqp://guest:guest@localhost//'
+
+#Results  backend (optional, but recommended for montoring)
+CELERY_RESULT_BACKEND = 'rpc://'
+
+CELERY_WORKER_POOL = 'solo'

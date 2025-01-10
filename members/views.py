@@ -5,9 +5,11 @@ from django.template import loader
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import UserSerializer
+from .serializers import UserSerializer, SubscriptionSerializer
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
+
+from .tasks import message_on_sub
 
 def members_index(request):
  template=loader.get_template('memberspage.html')
@@ -43,3 +45,19 @@ from rest_framework.permissions import IsAuthenticated
 @permission_classes([IsAuthenticated])
 def test_token(request):
  return Response({"message":'success',"user":request.user.email},status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication,TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def add_subscription(request):
+ data = {
+  "start" : request.data['start'],
+  "end" : request.data['end'],
+  "owner" : request.user.id,
+ }
+ serializer=SubscriptionSerializer(data = data)
+ if serializer.is_valid():
+  serializer.save()
+  message_on_sub.delay(request.user.email)
+  return Response({"message":"Started sending messages"},status=status.HTTP_200_OK)
+ return Response({"message":"Bad Request","error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)

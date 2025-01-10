@@ -14,3 +14,10 @@ Content-Type: application/json
 GET http://127.0.0.1:8000/api/test_token/
 Content-Type: application/json
 Authorization: Token 894f7c2222dbe11536ffff122baafdc564188c4f
+
+###
+POST http://127.0.0.1:8000/api/add_subscription/
+Content-Type: application/json
+Authorization: Token 894f7c2222dbe11536ffff122baafdc564188c4f
+
+{"start":"2025-01-08","end":"2025-01-10"}
